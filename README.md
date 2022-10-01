@@ -36,6 +36,10 @@ Using the default settings, which are to backup locally, with a retention of one
 
 Using environment variables the periodicity and retention can be increased, and any rclone target can be used to achieve direct backup.
 
+### LLDAP
+
+It should be noted that this backup script only backs up the sqlite3 database. To fully restore an lldap installation it will be necessary to also backup other files (lldap_config.toml private_key). These are static files and do not change post installation. This backup just addresses the database.
+
 #### storage backend
 
 By default we use [Rclone](https://rclone.org/docs/) to backup to the local filesystem. This can be exposed by mapping the backup directory in the container (by default "/sqliteback" - the ```RCLONE_REMOTE_DIR``` environment variable) to the host filesystem. This happens once a day, at five past midnight.
