@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 DATA_DIR="/sqliteback/data"
 BACKUP_DIR="/sqliteback/backup"
