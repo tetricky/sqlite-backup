@@ -52,7 +52,8 @@ function backup_package() {
         
         echo "backup_package(): display backup zip file list" >> ${BACKUP_DIR}/report
 
-        zip -sf ${BACKUP_FILE_ZIP}
+        zip -sf ${BACKUP_FILE_ZIP}/ # echo $TIMEZONE 
+
     else
         color yellow "backup_package(): skip package backup files"
         

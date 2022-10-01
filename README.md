@@ -54,7 +54,7 @@ Note that you need to set the environment variable `RCLONE_REMOTE_NAME` to match
 run container using podman
   
 ```
-podman run -d --name lldap-backup -v [host sqlite database directory]:/sqlitebackup/data/ -v [host sqlite backup directory]:/sqliteback/ tetricky/sqlite-backup:latest
+podman run -d --name lldap-backup -v [host sqlite database directory]:/sqlitebackup/data/ -v [host sqlite backup directory]:/sqliteback/ -v :/config/rclone/rclone.conf tetricky/sqlite-backup:latest
 ```
 
 ### Restore

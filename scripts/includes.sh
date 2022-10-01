@@ -99,6 +99,8 @@ function init_env() {
     fi
 
     # DATA_DB
+    DATA_DIR="/sqliteback/data"
+    BACKUP_DIR="/sqliteback/backup"
     DATA_DB="${DATA_DIR}/${DB_NAME}"
 
     # CRON
@@ -160,13 +162,16 @@ function init_env() {
     fi
 
     # TIMEZONE
-    local TIMEZONE_MATCHED_COUNT=$(ls "/usr/share/zoneinfo/${TIMEZONE}" 2> /dev/null | wc -l)
+    TIMEZONE_MATCHED_COUNT=$(ls "/usr/share/zoneinfo/${TIMEZONE}" 2> /dev/null | wc -l)
     if [[ ${TIMEZONE_MATCHED_COUNT} -ne 1 ]]; then
         TIMEZONE="UTC"
     fi
 
     color yellow "========================================"
     color yellow "DB_NAME: ${DB_NAME}"
+    color yellow "DATA_DIR: ${DATA_DIR}"
+    color yellow "DATA_DB: ${DATA_DB}"
+    color yellow "BACKUP_DIR: ${BACKUP_DIR}"
     color yellow "CRON: ${CRON}"
     color yellow "RCLONE_REMOTE_NAME: ${RCLONE_REMOTE_NAME}"
     color yellow "RCLONE_REMOTE_DIR: ${RCLONE_REMOTE_DIR}"
