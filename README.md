@@ -36,7 +36,7 @@ Using the default settings, which are to backup locally, with a retention of one
 
 Using environment variables the periodicity and retention can be increased, and any rclone target can be used to achieve direct backup.
 
-### storage backend
+#### storage backend
 
 By default we use [Rclone](https://rclone.org/docs/) to backup to the local filesystem. This can be exposed by mapping the backup directory in the container (by default "/sqliteback" - the ```RCLONE_REMOTE_DIR``` environment variable) to the host filesystem. This happens once a day, at five past midnight.
 
@@ -45,13 +45,17 @@ In order to change the storage backend make a rclone.conf file on the host and m
 Note that you need to set the environment variable `RCLONE_REMOTE_NAME` to match the remote name in your rclone.conf file.
 
 
-#### Automatic Backups
+### Automatic Backups
 
 run container using podman
   
 ```
 podman run -d --name lldap-backup -v [host sqlite database directory]:/sqlitebackup/data/ -v [host sqlite backup directory]:/sqliteback/ tetricky/sqlite-backup:latest
 ```
+
+### Restore
+
+There is intentionally no restore routine built into the container. sqlite3 databases are simple files. Copying the backed up (extracted if compressed) database into the location of the original database to replace it will restore the database to the backup. The container using the database should be stopped before doing this. This is destructive. 
 
 ## Environment Variables
 

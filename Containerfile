@@ -12,8 +12,8 @@ FROM alpine:3.16
 
 # Alpine Linux 3.16 is used as a base, as this is the first version to include go-sendxmpp as a package
 
-LABEL "repository"="https://github.com/tetricky/lldap-backup/" \
-  "homepage"="https://github.com/tetricky/lldap-backup/" \
+LABEL "repository"="https://github.com/tetricky/sqlite-backup/" \
+  "homepage"="https://github.com/tetricky/sqlite-backup/" \
   "maintainer"="tetricky"
 
 COPY scripts/*.sh /app/
