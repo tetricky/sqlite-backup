@@ -6,11 +6,14 @@ FROM alpine:3.16
 # https://github.com/karbon15/EteBase-Backup
 
 # Written as simple backup container to dump lldap database
-# for nitnelave/lldap (but may be used for other sqlite databases)
+# for nitnelave/lldap
 # https://github.com/nitnelave/lldap
+# the container is written in such a way as to possibly be used for other sqlite database dumps
 
-LABEL "repository"="https://github.com/tetricky/sqliteback/" \
-  "homepage"="https://github.com/tetricky/sqliteback/" \
+# Alpine Linux 3.16 is used as a base, as this is the first version to include go-sendxmpp as a package
+
+LABEL "repository"="https://github.com/tetricky/lldap-backup/" \
+  "homepage"="https://github.com/tetricky/lldap-backup/" \
   "maintainer"="tetricky"
 
 COPY scripts/*.sh /app/
