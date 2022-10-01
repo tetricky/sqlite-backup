@@ -19,18 +19,8 @@ if [[ "$1" == "mail" ]]; then
     fi
 
     init_env
-
-    send_mail "Sqlite Backup Test" "Your SMTP looks configured correctly."
-
-    exit 0
-fi
-
-# restore
-if [[ "$1" == "restore" ]]; then
-    . /app/restore.sh
-
-    shift
-    restore $*
+    echo "mailx Test" >> ${BACKUP_DIR}/report
+    send_mail_report "mailx Test"
 
     exit 0
 fi
@@ -50,6 +40,7 @@ function configure_cron() {
 }
 
 init_env
+echo "entrypoint.sh initialisation for ${RCLONE_REMOTE} at $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKUP_DIR}/report
 check_rclone_connection
 configure_timezone
 configure_cron

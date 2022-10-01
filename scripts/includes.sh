@@ -1,11 +1,7 @@
 #!/bin/sh
 
 DATA_DIR="/sqliteback/data"
-# DB_NAME="users.db"
-# DATA_DB="${DATA_DIR}/${DB_NAME}"
 BACKUP_DIR="/sqliteback/backup"
-RESTORE_DIR="/sqliteback/restore"
-RESTORE_EXTRACT_DIR="${RESTORE_DIR}/extract"
 
 #################### Function ####################
 ########################################
@@ -32,53 +28,58 @@ function color() {
 #     None
 ########################################
 function check_rclone_connection() {
+    echo "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Initialising" >> ${BACKUP_DIR}/report
     rclone mkdir ${RCLONE_REMOTE}
     if [[ $? != 0 ]]; then
-        color red "storage system connection failure"
+        color red "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Storage system failure $(date +"%Y-%m-%d %H:%M:%S %Z")"
+        echo "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Storage system failure $(date +"%Y-%m-%d %H:%M:%S %Z")" >> ${BACKUP_DIR}/report
         exit 1
     fi
 }
 
 ########################################
-# Send mail by mailx.
+# Send mail report.
 # Arguments:
 #     mail subject
-#     mail content
 # Outputs:
-#     send mail result
+#     send report
 ########################################
-function send_mail() {
-    if [[ "${MAIL_DEBUG}" == "TRUE" ]]; then
-        local MAIL_VERBOSE="-v"
-    fi
-
-    echo "$2" | mailx ${MAIL_VERBOSE} -s "$1" ${MAIL_SMTP_VARIABLES} ${MAIL_TO}
-    if [[ $? != 0 ]]; then
-        color red "mail sending failed"
-    else
-        color blue "mail send was successfully"
-    fi
-}
-
-########################################
-# Send mail.
-# Arguments:
-#     backup successful
-#     mail content
-########################################
-function send_mail_content() {
+function send_mail_report() {
     if [[ "${MAIL_SMTP_ENABLE}" == "FALSE" ]]; then
         return
     fi
 
-    # successful
-    if [[ "$1" == "TRUE" && "${MAIL_WHEN_SUCCESS}" == "TRUE" ]]; then
-        send_mail "Sqlite Backup Success" "$2"
+    if [[ "${MAIL_DEBUG}" == "TRUE" ]]; then
+        local MAIL_VERBOSE="-v"
     fi
 
-    # failed
-    if [[ "$1" == "FALSE" && "${MAIL_WHEN_FAILURE}" == "TRUE" ]]; then
-        send_mail "Sqlite Backup Failed" "$2"
+    cat ${BACKUP_DIR}/report | mailx ${MAIL_VERBOSE} -s "$1" ${MAIL_SMTP_VARIABLES} ${MAIL_TO}
+    if [[ $? != 0 ]]; then
+        color red "send_mail(): mailx send failed"
+        echo "send_mail(): mailx send failed" >> ${BACKUP_DIR}/report
+    else
+        color blue "send_mail(): mailx send successful"
+        echo "send_mail(): mailx send successful" >> ${BACKUP_DIR}/report
+    fi
+}
+
+########################################
+# Send xmpp report.
+# Outputs:
+#     send report
+########################################
+function send_xmpp_report() {
+    if [[ "${SENDXMPP_ENABLE}" == "FALSE" ]]; then
+        return
+    fi
+
+    cat ${BACKUP_DIR}/report | go-sendxmpp -u ${SENDXMPP_USER} -j ${SENDXMPP_SERVER} -p ${SENDXMPP_PASSWORD} ${SENDXMPP_RECIPIENT}
+    if [[ $? != 0 ]]; then
+        color red "send_xmpp_report(): sendxmpp failed"
+        echo "send_xmpp_report(): sendxmpp failed" >> ${BACKUP_DIR}/report
+    else
+        color blue "send_xmpp_report(): sendxmpp successful"
+        echo "send_xmpp_report(): sendxmpp successful" >> ${BACKUP_DIR}/report
     fi
 }
 
@@ -141,53 +142,21 @@ function init_env() {
     fi
 
     # MAIL_SMTP_ENABLE
-    # MAIL_TO
     MAIL_SMTP_ENABLE=$(echo "${MAIL_SMTP_ENABLE}" | tr '[a-z]' '[A-Z]')
     if [[ "${MAIL_SMTP_ENABLE}" == "TRUE" && -n "${MAIL_TO}" ]]; then
         MAIL_SMTP_ENABLE="TRUE"
     else
         MAIL_SMTP_ENABLE="FALSE"
-    fi
-
-    # MAIL_WHEN_SUCCESS
-    MAIL_WHEN_SUCCESS=$(echo "${MAIL_WHEN_SUCCESS}" | tr '[a-z]' '[A-Z]')
-    if [[ "${MAIL_WHEN_SUCCESS}" == "FALSE" ]]; then
-        MAIL_WHEN_SUCCESS="FALSE"
-    else
-        MAIL_WHEN_SUCCESS="TRUE"
-    fi
-
-    # MAIL_WHEN_FAILURE
-    MAIL_WHEN_FAILURE=$(echo "${MAIL_WHEN_FAILURE}" | tr '[a-z]' '[A-Z]')
-    if [[ "${MAIL_WHEN_FAILURE}" == "FALSE" ]]; then
-        MAIL_WHEN_FAILURE="FALSE"
-    else
-        MAIL_WHEN_FAILURE="TRUE"
+        echo "mailx disabled, or not configured" >> ${BACKUP_DIR}/report
     fi
 
     # SENDXMPP_ENABLE
-    # MAIL_TO
     SENDXMPP_ENABLE=$(echo "${SENDXMPP_ENABLE}" | tr '[a-z]' '[A-Z]')
-    if [[ "${SENDXMPP_ENABLE}" == "TRUE" && -n "${MAIL_TO}" ]]; then
+    if [[ "${SENDXMPP_ENABLE}" == "TRUE" && -n "${SENDXMPP_RECIPIENT}" ]]; then
         SENDXMPP_ENABLE="TRUE"
     else
         SENDXMPP_ENABLE="FALSE"
-    fi
-
-    # SENDXMPP_WHEN_SUCCESS
-    SENDXMPP_WHEN_SUCCESS=$(echo "${SENDXMPP_WHEN_SUCCESS}" | tr '[a-z]' '[A-Z]')
-    if [[ "${SENDXMPP_WHEN_SUCCESS}" == "FALSE" ]]; then
-        SENDXMPP_WHEN_SUCCESS="FALSE"
-    else
-        SENDXMPP_WHEN_SUCCESS="TRUE"
-    fi
-
-    # SENDXMPP_WHEN_FAILURE
-    SENDXMPP_WHEN_FAILURE=$(echo "${SENDXMPP_WHEN_FAILURE}" | tr '[a-z]' '[A-Z]')
-    if [[ "${SENDXMPP_WHEN_FAILURE}" == "FALSE" ]]; then
-        SENDXMPP_WHEN_FAILURE="FALSE"
-    else
-        SENDXMPP_WHEN_FAILURE="TRUE"
+        echo "sendxmpp disabled, or not configured" >> ${BACKUP_DIR}/report
     fi
 
     # TIMEZONE
@@ -208,14 +177,10 @@ function init_env() {
     color yellow "MAIL_SMTP_ENABLE: ${MAIL_SMTP_ENABLE}"
     if [[ "${MAIL_SMTP_ENABLE}" == "TRUE" ]]; then
         color yellow "MAIL_TO: ${MAIL_TO}"
-        color yellow "MAIL_WHEN_SUCCESS: ${MAIL_WHEN_SUCCESS}"
-        color yellow "MAIL_WHEN_FAILURE: ${MAIL_WHEN_FAILURE}"
     fi
     color yellow "SENDXMPP_ENABLE: ${SENDXMPP_ENABLE}"
     if [[ "${SENDXMPP_ENABLE}" == "TRUE" ]]; then
         color yellow "SENDXMPP_RECIPIENT: ${SENDXMPP_RECIPIENT}"
-        color yellow "SENDXMPP_WHEN_SUCCESS: ${SENDXMPP_WHEN_SUCCESS}"
-        color yellow "SENDXMPP_WHEN_FAILURE: ${SENDXMPP_WHEN_FAILURE}"
     fi
     color yellow "TIMEZONE: ${TIMEZONE}"
     color yellow "========================================"

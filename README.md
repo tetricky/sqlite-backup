@@ -33,6 +33,13 @@ This tool supports backing up the following file.
 
 - `users.db`
 
+## Building the container
+
+Clone the repository. From the root directory build with:
+
+```
+podman build -t tetricky/lldap-backup:latest -f Containerfile
+```
 
 ## Usage Note
 
@@ -251,7 +258,9 @@ The recipient of the XMPP notifications. Required if SENDXMPP_ENABLE is true.
 
 Default: ``
 
-### The MAIL notification settings are inherited, and included if they might be of use. They should be considered unsupported.
+### MAIL settings
+
+The MAIL notification settings are inherited, and included if they might be of use. They should be considered unsupported.
 
 #### MAIL_SMTP_ENABLE
 
@@ -304,11 +313,11 @@ Default: `TRUE`
 You can use the following command to test the mail sending. Remember to replace your smtp variables.
 
 ```shell
-podman run --rm -it -e MAIL_SMTP_VARIABLES='<your smtp variables>' tetricky/lldap-backup:latest mail <mail send to>
+podman run --rm -it -e MAIL_SMTP_VARIABLES='<your smtp variables>' tetricky/lldap-backup:latest mail <mail recipient>
 
 # Or
 
-podman run --rm -it -e MAIL_SMTP_VARIABLES='<your smtp variables>' -e MAIL_TO='<mail send to>' tetricky/lldap-backup:latest mail
+podman run --rm -it -e MAIL_SMTP_VARIABLES='<your smtp variables>' -e MAIL_TO='<mail recipient>' tetricky/lldap-backup:latest mail
 ```
 
 
