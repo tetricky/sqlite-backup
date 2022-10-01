@@ -8,10 +8,6 @@ BACKUP_FILE_DB="${BACKUP_DIR}/${TIMESTAMP}-${DB_NAME}"
 # backup zip file
 BACKUP_FILE_ZIP="${BACKUP_DIR}/${TIMESTAMP}-${DB_NAME}.zip"
 
-function clear_dir() {
-    rm -rf ${BACKUP_DIR}
-}
-
 function backup_db() {
     color blue "backup_db(): backup sqlite database"
     
@@ -27,7 +23,6 @@ function backup_db() {
 }
 
 function backup() {
-    mkdir -p ${BACKUP_DIR}
 
     backup_db
 
@@ -117,14 +112,10 @@ echo "backup.sh run for ${DB_NAME} at $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKU
 
 init_env
 check_rclone_connection
-
-clear_dir
 backup
 backup_package
 upload
-clear_dir
 clear_history
-
 send_xmpp_report
 send_mail_report "${RCLONE_REMOTE_NAME} Backup Report $(date +"%Y-%m-%d %H:%M:%S %Z")."
 
