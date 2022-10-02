@@ -72,7 +72,7 @@ function upload() {
 
         rclone copy ${BACKUP_DIR} ${RCLONE_REMOTE}
 
-        exit 1
+        return 1
     fi
 
     rclone copy ${UPLOAD_FILE} ${RCLONE_REMOTE}
@@ -83,7 +83,7 @@ function upload() {
 
         echo "upload(): No remote copy, check backup directory $(date +"%Y-%m-%d %H:%M:%S %Z")." >> ${BACKUP_DIR}/report
 
-        exit 1
+        return 1
     fi
 }
 
