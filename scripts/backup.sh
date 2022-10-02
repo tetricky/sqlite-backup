@@ -65,18 +65,23 @@ function upload() {
 
     # upload file not exist
     if [[ ! -f ${UPLOAD_FILE} ]]; then
-        color red "upload(): upload file not found"
-        
-        echo "upload(): File upload failed at $(date +"%Y-%m-%d %H:%M:%S %Z"). Reason: Upload file not found." >> ${BACKUP_DIR}/report
+
+        color yellow "upload(): No zip file, rclone copy directory"
+
+        echo "upload(): No zip file, rclone copy directory" >> ${BACKUP_DIR}/report
+
+        rclone copy ${BACKUP_DIR} ${RCLONE_REMOTE}
 
         exit 1
     fi
 
     rclone copy ${UPLOAD_FILE} ${RCLONE_REMOTE}
+
     if [[ $? != 0 ]]; then
-        color yellow "upload(): No remote upload, check backup directory"
-        
-         echo "upload(): No remote upload, check backup directory $(date +"%Y-%m-%d %H:%M:%S %Z")." >> ${BACKUP_DIR}/report
+
+        color red "upload(): No remote copy, check backup directory"
+
+        echo "upload(): No remote copy, check backup directory $(date +"%Y-%m-%d %H:%M:%S %Z")." >> ${BACKUP_DIR}/report
 
         exit 1
     fi
@@ -84,6 +89,7 @@ function upload() {
 
 function clear_history() {
     if [[ "${BACKUP_KEEP_DAYS}" -gt 0 ]]; then
+
         color blue "clear_history(): delete ${BACKUP_KEEP_DAYS} days ago backup files"
         
         echo "clear_history(): delete ${BACKUP_KEEP_DAYS} days ago backup files" >> ${BACKUP_DIR}/report
