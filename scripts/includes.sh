@@ -2,6 +2,7 @@
 
 DATA_DIR="/sqlitedata"
 BACKUP_DIR="/backup"
+ENV_FILE="/.env"
 
 #################### Function ####################
 ########################################

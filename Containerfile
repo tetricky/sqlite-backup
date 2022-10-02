@@ -18,6 +18,7 @@ LABEL "repository"="https://github.com/tetricky/sqlite-backup/" \
 
 COPY scripts/*.sh /app/
 COPY rclone.conf /root/.config/rclone/
+COPY .env /.env
 
 RUN chmod +x /app/*.sh \
   && apk add --no-cache bash curl sqlite p7zip heirloom-mailx tzdata unzip go-sendxmpp \
