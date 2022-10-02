@@ -16,25 +16,6 @@ LABEL "repository"="https://github.com/tetricky/sqlite-backup/" \
   "homepage"="https://github.com/tetricky/sqlite-backup/" \
   "maintainer"="tetricky"
 
-ENV DATA_DIR="/sqlitedata"
-    BACKUP_DIR="/backup"
-    DB_NAME="users.db"
-    CRON="5 0 * * *"
-    RCLONE_REMOTE_NAME="sqlitebackup"
-    RCLONE_REMOTE_DIR="/sqliteback/"
-    ZIP_ENABLE="FALSE"
-    ZIP_PASSWORD="password"
-    BACKUP_KEEP_DAYS="1"
-    MAIL_SMTP_ENABLE="FALSE"
-    MAIL_SMTP_VARIABLES=""
-    MAIL_TO=""
-    SENDXMPP_ENABLE="FALSE"
-    SENDXMPP_USER=""
-    SENDXMPP_PASSWORD=""
-    SENDXMPP_SERVER=""
-    SENDXMPP_RECIPIENT=""
-    TIMEZONE="UTC"
-
 COPY scripts/*.sh /app/
 COPY rclone.conf /root/.config/rclone/
 
