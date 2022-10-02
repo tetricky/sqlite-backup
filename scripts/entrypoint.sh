@@ -41,7 +41,6 @@ function configure_cron() {
 
 init_env
 mkdir -p ${BACKUP_DIR}
-echo "entrypoint.sh initialisation for ${RCLONE_REMOTE} at $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKUP_DIR}/report
 check_rclone_connection
 configure_timezone
 configure_cron

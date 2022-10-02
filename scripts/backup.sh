@@ -74,9 +74,9 @@ function upload() {
 
     rclone copy ${UPLOAD_FILE} ${RCLONE_REMOTE}
     if [[ $? != 0 ]]; then
-        color red "upload(): upload failed"
+        color yellow "upload(): No remote upload, check backup directory"
         
-         echo "upload(): File upload failed at $(date +"%Y-%m-%d %H:%M:%S %Z")." >> ${BACKUP_DIR}/report
+         echo "upload(): No remote upload, check backup directory $(date +"%Y-%m-%d %H:%M:%S %Z")." >> ${BACKUP_DIR}/report
 
         exit 1
     fi
@@ -107,10 +107,8 @@ function clear_history() {
 }
 
 color blue "backup.sh run for ${DB_NAME} at $(date +"%Y-%m-%d %H:%M:%S %Z")"
-
 echo "backup.sh run for ${DB_NAME} at $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKUP_DIR}/report
 
-# init_env
 check_rclone_connection
 backup
 backup_package

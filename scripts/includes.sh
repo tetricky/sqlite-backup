@@ -117,7 +117,7 @@ function init_env() {
     fi
 
     # RCLONE_REMOTE_DIR
-    local RCLONE_REMOTE_DIR_DEFAULT="/sqlitebackup/"
+    local RCLONE_REMOTE_DIR_DEFAULT="/sqliteback/"
     if [[ -z "${RCLONE_REMOTE_DIR}" ]]; then
         export RCLONE_REMOTE_DIR="${RCLONE_REMOTE_DIR_DEFAULT}"
     fi
