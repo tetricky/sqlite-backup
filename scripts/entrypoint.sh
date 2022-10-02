@@ -22,7 +22,7 @@ if [[ "$1" == "mail" ]]; then
     echo "mailx Test" >> ${BACKUP_DIR}/report
     send_mail_report "mailx Test"
 
-    exit 0
+    exit 0/backup/sqlite_tk/
 fi
 
 function configure_timezone() {
@@ -40,6 +40,7 @@ function configure_cron() {
 }
 
 init_env
+mkdir -p ${BACKUP_DIR}
 echo "entrypoint.sh initialisation for ${RCLONE_REMOTE} at $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKUP_DIR}/report
 check_rclone_connection
 configure_timezone

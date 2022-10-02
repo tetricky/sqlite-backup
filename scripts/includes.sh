@@ -1,7 +1,7 @@
 #!/bin/bash
 
-DATA_DIR="/sqliteback/data"
-BACKUP_DIR="/sqliteback/backup"
+DATA_DIR="/sqlitedata"
+BACKUP_DIR="/backup"
 
 #################### Function ####################
 ########################################
@@ -99,8 +99,8 @@ function init_env() {
     fi
 
     # DATA_DB
-    DATA_DIR="/sqliteback/data"
-    BACKUP_DIR="/sqliteback/backup"
+    DATA_DIR="/sqlitedata"
+    BACKUP_DIR="/backup"
     DATA_DB="${DATA_DIR}/${DB_NAME}"
 
     # CRON
@@ -116,7 +116,7 @@ function init_env() {
     fi
 
     # RCLONE_REMOTE_DIR
-    local RCLONE_REMOTE_DIR_DEFAULT="/sqliteback/"
+    local RCLONE_REMOTE_DIR_DEFAULT="/sqlitebackup/"
     if [[ -z "${RCLONE_REMOTE_DIR}" ]]; then
         RCLONE_REMOTE_DIR="${RCLONE_REMOTE_DIR_DEFAULT}"
     fi
@@ -177,7 +177,7 @@ function init_env() {
     color yellow "RCLONE_REMOTE_DIR: ${RCLONE_REMOTE_DIR}"
     color yellow "RCLONE_REMOTE: ${RCLONE_REMOTE}"
     color yellow "ZIP_ENABLE: ${ZIP_ENABLE}"
-    color yellow "ZIP_PASSWORD: ${ZIP_PASSWORD} Chars"
+    color yellow "ZIP_PASSWORD: ${ZIP_PASSWORD}"
     color yellow "BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS}"
     color yellow "MAIL_SMTP_ENABLE: ${MAIL_SMTP_ENABLE}"
     if [[ "${MAIL_SMTP_ENABLE}" == "TRUE" ]]; then
