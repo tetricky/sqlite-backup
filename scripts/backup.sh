@@ -110,7 +110,7 @@ color blue "backup.sh run for ${DB_NAME} at $(date +"%Y-%m-%d %H:%M:%S %Z")"
 
 echo "backup.sh run for ${DB_NAME} at $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKUP_DIR}/report
 
-init_env
+# init_env
 check_rclone_connection
 backup
 backup_package

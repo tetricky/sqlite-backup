@@ -96,76 +96,76 @@ function init_env() {
     # DB_NAME
     local DB_NAME_DEFAULT="users.db"
     if [[ -z "${DB_NAME}" ]]; then
-        DB_NAME="${DB_NAME_DEFAULT}"
+        export DB_NAME="${DB_NAME_DEFAULT}"
     fi
 
     # DATA_DB
-    DATA_DIR="/sqlitedata"
-    BACKUP_DIR="/backup"
-    DATA_DB="${DATA_DIR}/${DB_NAME}"
+    export DATA_DIR="/sqlitedata"
+    export BACKUP_DIR="/backup"
+    export DATA_DB="${DATA_DIR}/${DB_NAME}"
 
     # CRON
     local CRON_DEFAULT="5 0 * * *"
     if [[ -z "${CRON}" ]]; then
-        CRON="${CRON_DEFAULT}"
+        export CRON="${CRON_DEFAULT}"
     fi
 
     # RCLONE_REMOTE_NAME
     local RCLONE_REMOTE_NAME_DEFAULT="sqlitebackup"
     if [[ -z "${RCLONE_REMOTE_NAME}" ]]; then
-        RCLONE_REMOTE_NAME="${RCLONE_REMOTE_NAME_DEFAULT}"
+        export RCLONE_REMOTE_NAME="${RCLONE_REMOTE_NAME_DEFAULT}"
     fi
 
     # RCLONE_REMOTE_DIR
     local RCLONE_REMOTE_DIR_DEFAULT="/sqlitebackup/"
     if [[ -z "${RCLONE_REMOTE_DIR}" ]]; then
-        RCLONE_REMOTE_DIR="${RCLONE_REMOTE_DIR_DEFAULT}"
+        export RCLONE_REMOTE_DIR="${RCLONE_REMOTE_DIR_DEFAULT}"
     fi
 
     # RCLONE_REMOTE
-    RCLONE_REMOTE="${RCLONE_REMOTE_NAME}:${RCLONE_REMOTE_DIR}"
+    export RCLONE_REMOTE="${RCLONE_REMOTE_NAME}:${RCLONE_REMOTE_DIR}"
 
     # ZIP_ENABLE
     ZIP_ENABLE=$(echo "${ZIP_ENABLE}" | tr '[a-z]' '[A-Z]')
     if [[ "${ZIP_ENABLE}" == "TRUE" ]]; then
-        ZIP_ENABLE="TRUE"
+        export ZIP_ENABLE="TRUE"
     else
-        ZIP_ENABLE="FALSE"
+        export ZIP_ENABLE="FALSE"
     fi
 
     # ZIP_PASSWORD
     if [[ -z "${ZIP_PASSWORD}" ]]; then
-        ZIP_PASSWORD="password"
+        export ZIP_PASSWORD="password"
     fi
 
     # BACKUP_KEEP_DAYS
     local BACKUP_KEEP_DAYS_DEFAULT="1"
     if [[ -z "${BACKUP_KEEP_DAYS}" ]]; then
-        BACKUP_KEEP_DAYS="${BACKUP_KEEP_DAYS_DEFAULT}"
+        export BACKUP_KEEP_DAYS="${BACKUP_KEEP_DAYS_DEFAULT}"
     fi
 
     # MAIL_SMTP_ENABLE
     MAIL_SMTP_ENABLE=$(echo "${MAIL_SMTP_ENABLE}" | tr '[a-z]' '[A-Z]')
     if [[ "${MAIL_SMTP_ENABLE}" == "TRUE" && -n "${MAIL_TO}" ]]; then
-        MAIL_SMTP_ENABLE="TRUE"
+        export MAIL_SMTP_ENABLE="TRUE"
     else
-        MAIL_SMTP_ENABLE="FALSE"
+        export MAIL_SMTP_ENABLE="FALSE"
         echo "mailx disabled, or not configured" >> ${BACKUP_DIR}/report
     fi
 
     # SENDXMPP_ENABLE
     SENDXMPP_ENABLE=$(echo "${SENDXMPP_ENABLE}" | tr '[a-z]' '[A-Z]')
     if [[ "${SENDXMPP_ENABLE}" == "TRUE" && -n "${SENDXMPP_RECIPIENT}" ]]; then
-        SENDXMPP_ENABLE="TRUE"
+        export SENDXMPP_ENABLE="TRUE"
     else
-        SENDXMPP_ENABLE="FALSE"
+        export SENDXMPP_ENABLE="FALSE"
         echo "sendxmpp disabled, or not configured" >> ${BACKUP_DIR}/report
     fi
 
     # TIMEZONE
     TIMEZONE_MATCHED_COUNT=$(ls "/usr/share/zoneinfo/${TIMEZONE}" 2> /dev/null | wc -l)
     if [[ ${TIMEZONE_MATCHED_COUNT} -ne 1 ]]; then
-        TIMEZONE="UTC"
+        export TIMEZONE="UTC"
     fi
 
     color yellow "========================================"
