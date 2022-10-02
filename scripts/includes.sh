@@ -150,7 +150,6 @@ function init_env() {
         export MAIL_SMTP_ENABLE="TRUE"
     else
         export MAIL_SMTP_ENABLE="FALSE"
-        echo "mailx disabled, or not configured" >> ${BACKUP_DIR}/report
     fi
 
     # SENDXMPP_ENABLE
@@ -159,7 +158,6 @@ function init_env() {
         export SENDXMPP_ENABLE="TRUE"
     else
         export SENDXMPP_ENABLE="FALSE"
-        echo "sendxmpp disabled, or not configured" >> ${BACKUP_DIR}/report
     fi
 
     # TIMEZONE
