@@ -25,5 +25,24 @@ RUN chmod +x /app/*.sh \
   && curl https://rclone.org/install.sh | bash \
   && apk del curl unzip && rm -rf /var/cache/apk/*
 
+ENV DATA_DIR="/sqlitedata"
+    BACKUP_DIR="/backup"
+    DB_NAME="users.db"
+    CRON="5 0 * * *"
+    RCLONE_REMOTE_NAME="sqlitebackup"
+    RCLONE_REMOTE_DIR="/sqliteback/"
+    ZIP_ENABLE="FALSE"
+    ZIP_PASSWORD="password"
+    BACKUP_KEEP_DAYS="1"
+    MAIL_SMTP_ENABLE="FALSE"
+    MAIL_SMTP_VARIABLES=""
+    MAIL_TO=""
+    SENDXMPP_ENABLE="FALSE"
+    SENDXMPP_USER=""
+    SENDXMPP_PASSWORD=""
+    SENDXMPP_SERVER=""
+    SENDXMPP_RECIPIENT=""
+    TIMEZONE="UTC"
+
 ENTRYPOINT ["/app/entrypoint.sh"]
 CMD ["cron", "5 0 * * *"]
