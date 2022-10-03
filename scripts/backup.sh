@@ -5,10 +5,11 @@
 TIMESTAMP=$(date +"%Y-%m-%d-%H:%M")
 # backup Sqlite database file
 BACKUP_FILE_DB="${BACKUP_DIR}/${TIMESTAMP}-${DB_NAME}"
-# backup zip file
-BACKUP_FILE_ZIP="${BACKUP_DIR}/${TIMESTAMP}.zip"
 
-function backup_db() {
+function backup() {
+
+    rm ${BACKUP_DIR}/*${DB_NAME}
+    
     color blue "backup_db(): backup sqlite database"
     
     echo "backup_db(): backup sqlite database" >> ${BACKUP_DIR}/report
@@ -16,75 +17,28 @@ function backup_db() {
     if [[ -f "${DATA_DB}" ]]; then
         sqlite3 ${DATA_DB} ".backup ${BACKUP_FILE_DB}"
     else
-        color yellow "backup_db(): not found sqlite database, skipping"
+        color red "backup_db(): not found sqlite database, skipping"
         
         echo "backup_db(): not found sqlite database, skipping" >> ${BACKUP_DIR}/report
     fi
+
+    ls -lh ${BACKUP_DIR}/*.${DB_NAME}
+    ls -lh ${BACKUP_DIR}/*.${DB_NAME} >> ${BACKUP_DIR}/report
 }
 
-function backup() {
-
-    rm ${BACKUP_DIR}/*${DB_NAME}
-    rm ${BACKUP_DIR}/*.zip
-    
-    backup_db
-
-    ls -lah ${BACKUP_DIR}
-    
-    ls -lah ${BACKUP_DIR} >> ${BACKUP_DIR}/report
-}
-
-function backup_package() {
-    if [[ "${ZIP_ENABLE}" == "TRUE" ]]; then
-        color blue "backup_package(): package backup file"
-        
-        echo "backup_package(): package backup file" >> ${BACKUP_DIR}/report
-
-        UPLOAD_FILE="${BACKUP_FILE_ZIP}"
-
-        zip -jP ${ZIP_PASSWORD} ${BACKUP_FILE_ZIP} ${BACKUP_DIR}/*
-
-        ls -lah ${BACKUP_DIR}
-
-        color blue "backup_package(): display backup zip file list"
-        
-        echo "backup_package(): backup zip ${BACKUP_FILE_ZIP}" >> ${BACKUP_DIR}/report
-
-        zip -sf ${BACKUP_FILE_ZIP}
-
-    else
-        color yellow "backup_package(): skip package backup files"
-        
-        echo "backup_package(): skip package backup files" >> ${BACKUP_DIR}/report
-
-        UPLOAD_FILE="${BACKUP_DIR}"
-    fi
-}
 
 function upload() {
     color blue "upload(): upload backup file to storage system"
     
     echo "upload(): upload backup file to storage system" >> ${BACKUP_DIR}/report
-
-    # upload file not exist
-    if [[ ! -f ${UPLOAD_FILE} ]]; then
-
-        color yellow "upload(): No zip file, rclone copy directory"
-
-        echo "upload(): No zip file, rclone copy directory" >> ${BACKUP_DIR}/report
-
-        rclone copy ${BACKUP_DIR} ${RCLONE_REMOTE}
-
-        return 1
-    fi
-
-    rclone copy ${UPLOAD_FILE} ${RCLONE_REMOTE}
+    
+    rclone copy ${BACKUP_DIR} ${RCLONE_REMOTE}
 
     if [[ $? != 0 ]]; then
 
-        color red "upload(): No remote copy, check backup directory"
+        color red "upload(): Remote copy failed, check backup directory"
 
-        echo "upload(): No remote copy, check backup directory $(date +"%Y-%m-%d %H:%M:%S %Z")." >> ${BACKUP_DIR}/report
+        echo "upload(): Remote copy failed, check backup directory $(date +"%Y-%m-%d %H:%M:%S %Z")." >> ${BACKUP_DIR}/report
 
         return 1
     fi
@@ -101,7 +55,7 @@ function clear_history() {
 
         for RCLONE_DELETE_FILE in ${RCLONE_DELETE_LIST}
         do
-            color yellow "clear_history(): deleting ${RCLONE_DELETE_FILE}"
+            color blue "clear_history(): deleting ${RCLONE_DELETE_FILE}"
             
             echo "clear_history(): deleting ${RCLONE_DELETE_FILE}" >> ${BACKUP_DIR}/report
 
@@ -120,10 +74,8 @@ echo "backup.sh run for ${DB_NAME} at $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKU
 
 check_rclone_connection
 backup
-backup_package
 upload
 clear_history
 send_xmpp_report
 send_mail_report "${RCLONE_REMOTE_NAME} Backup Report $(date +"%Y-%m-%d %H:%M:%S %Z")."
-
 

@@ -25,6 +25,7 @@ function color() {
 #     None
 ########################################
 function check_rclone_connection() {
+    color blue "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Initialising"
     echo "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Initialising" >> ${BACKUP_DIR}/report
     rclone mkdir ${RCLONE_REMOTE}
     if [[ $? != 0 ]]; then
@@ -55,7 +56,7 @@ function send_mail_report() {
         color red "send_mail(): mailx send failed"
         echo "send_mail(): mailx send failed" >> ${BACKUP_DIR}/report
     else
-        color blue "send_mail(): mailx send successful"
+        color green "send_mail(): mailx send successful"
         echo "send_mail(): mailx send successful" >> ${BACKUP_DIR}/report
     fi
 }
@@ -75,7 +76,7 @@ function send_xmpp_report() {
         color red "send_xmpp_report(): sendxmpp failed"
         echo "send_xmpp_report(): sendxmpp failed" >> ${BACKUP_DIR}/report
     else
-        color blue "send_xmpp_report(): sendxmpp successful"
+        color green "send_xmpp_report(): sendxmpp successful"
         echo "send_xmpp_report(): sendxmpp successful" >> ${BACKUP_DIR}/report
     fi
 }
@@ -88,80 +89,6 @@ function send_xmpp_report() {
 #     environment variables
 ########################################
 function init_env() {
-
-    # DB_NAME
-    local DB_NAME_DEFAULT="users.db"
-    if [[ -z "${DB_NAME}" ]]; then
-        export DB_NAME="${DB_NAME_DEFAULT}"
-    fi
-
-    # DATA_DB
-    export DATA_DIR="/sqlitedata"
-    export BACKUP_DIR="/backup"
-    export DATA_DB="${DATA_DIR}/${DB_NAME}"
-
-    # CRON
-    local CRON_DEFAULT="5 0 * * *"
-    if [[ -z "${CRON}" ]]; then
-        export CRON="${CRON_DEFAULT}"
-    fi
-
-    # RCLONE_REMOTE_NAME
-    local RCLONE_REMOTE_NAME_DEFAULT="sqlitebackup"
-    if [[ -z "${RCLONE_REMOTE_NAME}" ]]; then
-        export RCLONE_REMOTE_NAME="${RCLONE_REMOTE_NAME_DEFAULT}"
-    fi
-
-    # RCLONE_REMOTE_DIR
-    local RCLONE_REMOTE_DIR_DEFAULT="/sqliteback/"
-    if [[ -z "${RCLONE_REMOTE_DIR}" ]]; then
-        export RCLONE_REMOTE_DIR="${RCLONE_REMOTE_DIR_DEFAULT}"
-    fi
-
-    # RCLONE_REMOTE
-    export RCLONE_REMOTE="${RCLONE_REMOTE_NAME}:${RCLONE_REMOTE_DIR}"
-
-    # ZIP_ENABLE
-    ZIP_ENABLE=$(echo "${ZIP_ENABLE}" | tr '[a-z]' '[A-Z]')
-    if [[ "${ZIP_ENABLE}" == "TRUE" ]]; then
-        export ZIP_ENABLE="TRUE"
-    else
-        export ZIP_ENABLE="FALSE"
-    fi
-
-    # ZIP_PASSWORD
-    if [[ -z "${ZIP_PASSWORD}" ]]; then
-        export ZIP_PASSWORD="password"
-    fi
-
-    # FILES_TO_KEEP
-    local FILES_TO_KEEP_DEFAULT="1"
-    if [[ -z "${FILES_TO_KEEP}" ]]; then
-        export FILES_TO_KEEP="${FILES_TO_KEEP_DEFAULT}"
-    fi
-
-    # MAIL_SMTP_ENABLE
-    MAIL_SMTP_ENABLE=$(echo "${MAIL_SMTP_ENABLE}" | tr '[a-z]' '[A-Z]')
-    if [[ "${MAIL_SMTP_ENABLE}" == "TRUE" && -n "${MAIL_TO}" ]]; then
-        export MAIL_SMTP_ENABLE="TRUE"
-    else
-        export MAIL_SMTP_ENABLE="FALSE"
-    fi
-
-    # SENDXMPP_ENABLE
-    SENDXMPP_ENABLE=$(echo "${SENDXMPP_ENABLE}" | tr '[a-z]' '[A-Z]')
-    if [[ "${SENDXMPP_ENABLE}" == "TRUE" && -n "${SENDXMPP_RECIPIENT}" && -n "${SENDXMPP_USER}" ]]; then
-        export SENDXMPP_ENABLE="TRUE"
-    else
-        export SENDXMPP_ENABLE="FALSE"
-    fi
-
-    # TIMEZONE
-    TIMEZONE_MATCHED_COUNT=$(ls "/usr/share/zoneinfo/${TIMEZONE}" 2> /dev/null | wc -l)
-    if [[ ${TIMEZONE_MATCHED_COUNT} -ne 1 ]]; then
-        export TIMEZONE="UTC"
-    fi
-
     color yellow "========================================"
     color yellow "DB_NAME: ${DB_NAME}"
     color yellow "DATA_DIR: ${DATA_DIR}"
@@ -171,8 +98,6 @@ function init_env() {
     color yellow "RCLONE_REMOTE_NAME: ${RCLONE_REMOTE_NAME}"
     color yellow "RCLONE_REMOTE_DIR: ${RCLONE_REMOTE_DIR}"
     color yellow "RCLONE_REMOTE: ${RCLONE_REMOTE}"
-    color yellow "ZIP_ENABLE: ${ZIP_ENABLE}"
-    color yellow "ZIP_PASSWORD: ${ZIP_PASSWORD}"
     color yellow "FILES_TO_KEEP: ${FILES_TO_KEEP}"
     color yellow "MAIL_SMTP_ENABLE: ${MAIL_SMTP_ENABLE}"
     if [[ "${MAIL_SMTP_ENABLE}" == "TRUE" ]]; then
@@ -180,6 +105,7 @@ function init_env() {
     fi
     color yellow "SENDXMPP_ENABLE: ${SENDXMPP_ENABLE}"
     if [[ "${SENDXMPP_ENABLE}" == "TRUE" ]]; then
+        color yellow "SENDXMPP_USER: ${SENDXMPP_USER}"
         color yellow "SENDXMPP_RECIPIENT: ${SENDXMPP_RECIPIENT}"
     fi
     color yellow "TIMEZONE: ${TIMEZONE}"

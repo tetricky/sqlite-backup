@@ -39,12 +39,12 @@ function configure_cron() {
     fi
 }
 
-init_env
 mkdir -p ${BACKUP_DIR}
+color blue "Container up $(date +"%Y-%m-%d %H:%M:%S %Z")"
 echo "Container up $(date +"%Y-%m-%d %H:%M:%S %Z")" > ${BACKUP_DIR}/report
+init_env
 check_rclone_connection
 configure_timezone
 configure_cron
-
 # foreground run crond
 crond -l 2 -f
