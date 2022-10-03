@@ -65,6 +65,8 @@ function clear_history() {
                 
                 echo "clear_history(): delete ${RCLONE_DELETE_FILE} failed" >> ${BACKUP_DIR}/report
             fi
+            rclone cat ${RCLONE_REMOTE}
+            rclone cat ${RCLONE_REMOTE} >> ${BACKUP_DIR}/report
         done
     fi
 }
