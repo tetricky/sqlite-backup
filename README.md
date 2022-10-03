@@ -73,9 +73,9 @@ Default: `/sqliteback/data`
 
 #### BACKUP_DIR
 
-The location of the backups created.
+The location of the backups created to be copied to the storage backend.
 
-Default: `/sqliteback/backup`
+Default: `/backup`
 
 
 #### DB_NAME
@@ -86,13 +86,13 @@ Default: `users.db`
 
 #### RCLONE_REMOTE_NAME
 
-Rclone remote name, you can name it yourself.
+Rclone remote name, to upload the database dumps to. Must match the rclone.conf settings.
 
 Default: `sqlitebackup`
 
 #### RCLONE_REMOTE_DIR
 
-Folder for storing backup files in the storage system.
+Folder for storing backup files rclone storage system.
 
 Default: `/sqliteback/`
 
