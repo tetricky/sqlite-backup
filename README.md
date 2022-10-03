@@ -9,12 +9,11 @@ https://github.com/ttionya/sqlite-backup
 with further modifications from  karbon15/EteBase-Backup
 https://github.com/karbon15/EteBase-Backup
 
-### 
 
 Dumps the sqlite database to rclone storage system backend (defaults to local filesystem), using cron to automate, with a simple retention policy, and the possibility of notifications by email and/or xmpp.
 
 
-## Feature
+### Feature
 
 This tool supports backing up the following file.
 
@@ -22,15 +21,21 @@ This tool supports backing up the following file.
 
 In the event that the sqlite database is named differently, this can be set using the `DB_NAME` environment variable.
 
-## Building the container
+### Building the container
 
-Clone the repository. From the root directory build (using podman) with:
+Clone the repository.
+
+```
+git clone https://github.com/tetricky/sqlite-backup.git
+```
+
+From the root directory build (using podman which is out of scope here, docker should also work) with:
 
 ```
 podman build -t tetricky/sqlite-backup:latest -f Containerfile
 ```
 
-## Usage Note
+#### Usage Note
 
 Using the default settings, which are to backup locally, with a retention of two (see retention note), the container acts as a periodic (set by cron) database dump. In order to provide effective backup this dump must be included as part of a wider backup scheme. Alternatively a non-local rclone storage system may be used, and retention increased, to provide a simple backup scheme from this container alone.
 
@@ -40,9 +45,37 @@ The periodicity of backups (set by `CRON`) in conjunction with the number of fil
 
 Using environment variables the periodicity and retention can be increased, and any rclone target can be used to achieve direct backup.
 
-### LLDAP
+### Automatic Backups
 
-It should be noted that by default this backup script only dumps the sqlite3 database. To fully restore an lldap installation it will be necessary to also backup other files (`lldap_config.toml` `private_key`). This backup just addresses the database.
+#### Running the default container
+
+In the event that default settings are used, and the container is used to backup to a rclone storage backend on the local filesystem, then the storage backend location within the container must be mounted to the host computer in order to easily access the files outside the container.
+
+```
+podman run -d --name lldap-backup -v [host_lldap_database_directory]:/sqlitedata -v [host_backup_directory]:/sqliteback tetricky/sqlite-backup:latest
+```
+This is an equivalent run command, which might prove useful as a template to adjust environment variables for a specific use case.
+
+```
+podman run -d --name lldap-backup \
+-v [host_lldap_database_directory]:/sqlitedata \
+-v [host_backup_directory]:/sqliteback \
+-e CRON="5 0 * * *" \
+-e FILES_TO_KEEP="2" \
+-e MAIL_SMTP_ENABLE="FALSE" \
+-e MAIL_SMTP_VARIABLES="" \
+-e MAIL_TO="" \
+-e SENDXMPP_ENABLE="FALSE" \
+-e SENDXMPP_USER="" \
+-e SENDXMPP_PASSWORD="" \
+-e SENDXMPP_RECIPIENT="" \
+-e TIMEZONE="UTC" \
+tetricky/sqlite-backup:latest
+```
+
+### LLDAP Note
+
+It should be noted that by default this backup script only dumps the sqlite3 database. To fully restore an lldap installation it may be necessary to also backup other files (`lldap_config.toml` `private_key`). This backup just addresses the database.
 
 #### storage backend
 
@@ -123,21 +156,25 @@ Default: `UTC`
 
 ### Notifications using SENDXMPP
 
+A trypical notification will look similar to this:
+
+```
+backup.sh run for users.db at 2022-10-03 00:05:00 BST
+check_rclone_connection(): sqlitebackup Initialising
+backup_db(): backup sqlite database
+-rw-r--r--    1 root     root       40.0K Oct  3 00:05 /backup/2022-10-03-00:05-users.db
+upload(): upload backup file to storage system
+clear_history(): keep only 2 file(s)
+clear_history(): deleting 2022-10-02-00:05-users.db
+    40960 2022-10-03 00:05:00.672655984 2022-10-03-00:05-users.db
+      279 2022-10-03 00:05:00.708656089 report
+send_xmpp_report(): sendxmpp successful
+send_mail(): mailx send successful
+```
+
 #### SENDXMPP_ENABLE
 
-To enable, or otherwise, XMPP notifications.
-
-Default: `FALSE`
-
-#### SENDXMPP_WHEN_SUCCESS
-
-To enable XMPP notification on successful completion.
-
-Default: `FALSE`
-
-#### SENDXMPP_WHEN_FAILURE
-
-To enable XMPP notification of failure.
+To enable (`TRUE`), or otherwise, XMPP notifications.
 
 Default: `FALSE`
 
@@ -169,7 +206,7 @@ Default: ``
 
 #### MAIL_SMTP_ENABLE
 
-The tool uses [heirloom-mailx](https://www.systutorials.com/docs/linux/man/1-heirloom-mailx/) to send mail.
+To enable (`TRUE`), or otherwise, email notifications. The tool uses [heirloom-mailx](https://www.systutorials.com/docs/linux/man/1-heirloom-mailx/) to send mail.
 
 Default: `FALSE`
 
@@ -205,9 +242,6 @@ MAIL_SMTP_VARIABLES="-S smtp-use-starttls -S smtp=smtp://smtp.zoho.com:587 -S sm
 ```
 
 See [here](https://www.systutorials.com/sending-email-from-mailx-command-in-linux-using-gmails-smtp/) for more information.
-
-
-
 
 ## License
 
