@@ -22,8 +22,8 @@ function backup() {
         echo "backup_db(): not found sqlite database, skipping" >> ${BACKUP_DIR}/report
     fi
 
-    ls -lh ${BACKUP_DIR}/*.${DB_NAME}
-    ls -lh ${BACKUP_DIR}/*.${DB_NAME} >> ${BACKUP_DIR}/report
+    ls -lh ${BACKUP_DIR}/*${DB_NAME}
+    ls -lh ${BACKUP_DIR}/*${DB_NAME} >> ${BACKUP_DIR}/report
 }
 
 
