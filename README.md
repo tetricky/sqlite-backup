@@ -165,9 +165,7 @@ The recipient of the XMPP notifications. Required if SENDXMPP_ENABLE is true.
 
 Default: ``
 
-### MAIL Notification settings
-
-The MAIL notification settings are inherited, and included if they might be of use. They should be considered unsupported.
+### Notifications using mailx
 
 #### MAIL_SMTP_ENABLE
 
@@ -175,12 +173,19 @@ The tool uses [heirloom-mailx](https://www.systutorials.com/docs/linux/man/1-hei
 
 Default: `FALSE`
 
+#### MAIL_TO
+
+The recipient of the mailx notifications. Required if MAIL_SMTP_ENABLE is true.
+
+Default: ``
+
 #### MAIL_SMTP_VARIABLES
 
-Refer to the mailx documentation for the correct usage for your requirements. It's out of scope and unsupported here.
+Defines how the email notification is sent. Refer to the mailx documentation for the correct usage for your requirements. It's out of scope and unsupported here.
 
 **We will set the subject according to the usage scenario, so you should not use the `-s` option.**
 
+As an example to send notifications using a zoho account and server.
 
 ```text
 # My example:
@@ -193,7 +198,7 @@ Refer to the mailx documentation for the correct usage for your requirements. It
 -S smtp-auth-password=<my-email-password> \
 -S from=<my-email-address>
 ```
-These settings would translate as an environment variable of
+These settings would translate to an environment variable of:
 
 ```
 MAIL_SMTP_VARIABLES="-S smtp-use-starttls -S smtp=smtp://smtp.zoho.com:587 -S smtp-auth=login -S smtp-auth-user=<my-email-address> -S smtp-auth-password=<my-email-password> -S from=<my-email-address>"
@@ -201,21 +206,7 @@ MAIL_SMTP_VARIABLES="-S smtp-use-starttls -S smtp=smtp://smtp.zoho.com:587 -S sm
 
 See [here](https://www.systutorials.com/sending-email-from-mailx-command-in-linux-using-gmails-smtp/) for more information.
 
-#### MAIL_TO
 
-Who will receive the notification email.
-
-#### MAIL_WHEN_SUCCESS
-
-Send email when backup is successful.
-
-Default: `TRUE`
-
-#### MAIL_WHEN_FAILURE
-
-Send email when backup fails.
-
-Default: `TRUE`
 
 
 ## License
