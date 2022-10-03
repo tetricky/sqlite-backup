@@ -88,13 +88,13 @@ function upload() {
 }
 
 function clear_history() {
-    if [[ "${BACKUP_KEEP_DAYS}" -gt 0 ]]; then
+    if [[ "${FILES_TO_KEEP}" -gt 0 ]]; then
 
-        color blue "clear_history(): delete ${BACKUP_KEEP_DAYS} days ago backup files"
+        color blue "clear_history(): delete ${FILES_TO_KEEP} days ago backup files"
         
-        echo "clear_history(): delete ${BACKUP_KEEP_DAYS} days ago backup files" >> ${BACKUP_DIR}/report
+        echo "clear_history(): delete ${FILES_TO_KEEP} days ago backup files" >> ${BACKUP_DIR}/report
 
-        local RCLONE_DELETE_LIST=$(rclone lsf ${RCLONE_REMOTE} | head -n -${BACKUP_KEEP_DAYS})
+        local RCLONE_DELETE_LIST=$(rclone lsf ${RCLONE_REMOTE} | head -n -${FILES_TO_KEEP})
 
         for RCLONE_DELETE_FILE in ${RCLONE_DELETE_LIST}
         do

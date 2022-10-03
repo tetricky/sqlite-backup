@@ -74,7 +74,7 @@ function send_xmpp_report() {
         return
     fi
 
-    cat ${BACKUP_DIR}/report | go-sendxmpp -u ${SENDXMPP_USER} -j ${SENDXMPP_SERVER} -p ${SENDXMPP_PASSWORD} ${SENDXMPP_RECIPIENT}
+    cat ${BACKUP_DIR}/report | go-sendxmpp -u ${SENDXMPP_USER} -p ${SENDXMPP_PASSWORD} ${SENDXMPP_RECIPIENT}
     if [[ $? != 0 ]]; then
         color red "send_xmpp_report(): sendxmpp failed"
         echo "send_xmpp_report(): sendxmpp failed" >> ${BACKUP_DIR}/report
@@ -138,10 +138,10 @@ function init_env() {
         export ZIP_PASSWORD="password"
     fi
 
-    # BACKUP_KEEP_DAYS
-    local BACKUP_KEEP_DAYS_DEFAULT="1"
-    if [[ -z "${BACKUP_KEEP_DAYS}" ]]; then
-        export BACKUP_KEEP_DAYS="${BACKUP_KEEP_DAYS_DEFAULT}"
+    # FILES_TO_KEEP
+    local FILES_TO_KEEP_DEFAULT="1"
+    if [[ -z "${FILES_TO_KEEP}" ]]; then
+        export FILES_TO_KEEP="${FILES_TO_KEEP_DEFAULT}"
     fi
 
     # MAIL_SMTP_ENABLE
@@ -154,7 +154,7 @@ function init_env() {
 
     # SENDXMPP_ENABLE
     SENDXMPP_ENABLE=$(echo "${SENDXMPP_ENABLE}" | tr '[a-z]' '[A-Z]')
-    if [[ "${SENDXMPP_ENABLE}" == "TRUE" && -n "${SENDXMPP_RECIPIENT}" ]]; then
+    if [[ "${SENDXMPP_ENABLE}" == "TRUE" && -n "${SENDXMPP_RECIPIENT}" && -n "${SENDXMPP_USER}" ]]; then
         export SENDXMPP_ENABLE="TRUE"
     else
         export SENDXMPP_ENABLE="FALSE"
@@ -177,7 +177,7 @@ function init_env() {
     color yellow "RCLONE_REMOTE: ${RCLONE_REMOTE}"
     color yellow "ZIP_ENABLE: ${ZIP_ENABLE}"
     color yellow "ZIP_PASSWORD: ${ZIP_PASSWORD}"
-    color yellow "BACKUP_KEEP_DAYS: ${BACKUP_KEEP_DAYS}"
+    color yellow "FILES_TO_KEEP: ${FILES_TO_KEEP}"
     color yellow "MAIL_SMTP_ENABLE: ${MAIL_SMTP_ENABLE}"
     if [[ "${MAIL_SMTP_ENABLE}" == "TRUE" ]]; then
         color yellow "MAIL_TO: ${MAIL_TO}"

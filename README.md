@@ -114,11 +114,11 @@ Set your password to encrypt Zip archive. Note that the password will always be 
 
 Default: `password`
 
-#### BACKUP_KEEP_DAYS
+#### FILES_TO_KEEP
 
-Only keep last number of days backup files in the storage system. Set to `0` to keep all backup files.
+The number of files in the backup storage system to retain. A value of `1` will retain only the backup report, NOT any backups (for testing purposes). The minimum value to retain a backup is `2`. Set to `0` to keep all backup files.
 
-Default: `1`
+Default: `2`
 
 #### TIMEZONE
 
