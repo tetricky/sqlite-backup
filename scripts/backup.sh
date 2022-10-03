@@ -6,7 +6,7 @@ TIMESTAMP=$(date +"%Y-%m-%d-%H:%M")
 # backup Sqlite database file
 BACKUP_FILE_DB="${BACKUP_DIR}/${TIMESTAMP}-${DB_NAME}"
 # backup zip file
-BACKUP_FILE_ZIP="${BACKUP_DIR}/${TIMESTAMP}-${DB_NAME}.zip"
+BACKUP_FILE_ZIP="${BACKUP_DIR}/${TIMESTAMP}.zip"
 
 function backup_db() {
     color blue "backup_db(): backup sqlite database"
@@ -24,6 +24,9 @@ function backup_db() {
 
 function backup() {
 
+    rm ${BACKUP_DIR}/*${DB_NAME}
+    rm ${BACKUP_DIR}/*.zip
+    
     backup_db
 
     ls -lah ${BACKUP_DIR}
@@ -45,9 +48,9 @@ function backup_package() {
 
         color blue "backup_package(): display backup zip file list"
         
-        echo "backup_package(): display backup zip file list" >> ${BACKUP_DIR}/report
+        echo "backup_package(): backup zip ${BACKUP_FILE_ZIP}" >> ${BACKUP_DIR}/report
 
-        zip -sf ${BACKUP_FILE_ZIP}/ # echo $TIMEZONE 
+        zip -sf ${BACKUP_FILE_ZIP}
 
     else
         color yellow "backup_package(): skip package backup files"
@@ -123,6 +126,4 @@ clear_history
 send_xmpp_report
 send_mail_report "${RCLONE_REMOTE_NAME} Backup Report $(date +"%Y-%m-%d %H:%M:%S %Z")."
 
-color none ""
-echo "" >> ${BACKUP_DIR}/report
 

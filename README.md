@@ -200,6 +200,11 @@ Refer to the mailx documentation for the correct usage for your requirements. It
 -S smtp-auth-password=<my-email-password> \
 -S from=<my-email-address>
 ```
+These settings would translate as an environment variable of
+
+```
+MAIL_SMTP_VARIABLES="-S smtp-use-starttls -S smtp=smtp://smtp.zoho.com:587 -S smtp-auth=login -S smtp-auth-user=<my-email-address> -S smtp-auth-password=<my-email-password> -S from=<my-email-address>"
+```
 
 See [here](https://www.systutorials.com/sending-email-from-mailx-command-in-linux-using-gmails-smtp/) for more information.
 
