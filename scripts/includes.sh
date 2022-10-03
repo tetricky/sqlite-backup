@@ -27,8 +27,6 @@ function color() {
 function check_rclone_connection() {
     color blue "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Initialising"
     echo "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Initialising" >> ${BACKUP_DIR}/report
-    # Define RCLONE_REMOTE
-    export RCLONE_REMOTE="${RCLONE_REMOTE_NAME}:${RCLONE_REMOTE_DIR}"
     # test rclone storage backend
     rclone mkdir ${RCLONE_REMOTE}
     if [[ $? != 0 ]]; then
@@ -92,6 +90,10 @@ function send_xmpp_report() {
 #     environment variables
 ########################################
 function init_env() {
+    # Define DATA_DB
+    export DATA_DB="${DATA_DIR}/${DB_NAME}"
+    # Define RCLONE_REMOTE
+    export RCLONE_REMOTE="${RCLONE_REMOTE_NAME}:${RCLONE_REMOTE_DIR}"    
     color yellow "========================================"
     color yellow "DB_NAME: ${DB_NAME}"
     color yellow "DATA_DIR: ${DATA_DIR}"
