@@ -46,7 +46,7 @@ init_env
 check_rclone_connection
 configure_timezone
 rclone copy ${DATA_DIR}/lldap_config.toml ${RCLONE_REMOTE}/init/
-rclone copy ${BACKUP_DIR}/private_key ${RCLONE_REMOTE}/init/
+rclone copy ${DATA_DIR}/private_key ${RCLONE_REMOTE}/init/
 configure_cron
 # foreground run crond
 crond -l 2 -f
