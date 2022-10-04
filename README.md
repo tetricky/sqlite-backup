@@ -23,6 +23,8 @@ Dumps the sqlite database to rclone storage system backend (defaults to local fi
 This tool supports backing up the following file.
 
 - `users.db`
+- `lldap_config.toml`
+- `private_key`
 
 In the event that the sqlite database is named differently, this can be set using the `DB_NAME` environment variable.
 
@@ -42,9 +44,9 @@ podman build -t tetricky/sqlite-backup:latest -f Containerfile
 
 #### Usage Note
 
-Using the default settings, which are to backup locally, with a retention of two (see retention note), the container acts as a periodic (set by cron) database dump. In order to provide effective backup this dump must be included as part of a wider backup scheme. Alternatively a non-local rclone storage system may be used, and retention increased, to provide a simple backup scheme from this container alone.
+Using the default settings, which are to backup locally, with a retention of three (see retention note), the container acts as a periodic (set by cron) database dump. In order to provide effective backup this dump must be included as part of a wider backup scheme. Alternatively a non-local rclone storage system may be used, and retention increased, to provide a simple backup scheme from this container alone.
 
-Retention is set by `FILES_TO_KEEP` (default `2`). This works very simply and retains `FILES_TO_KEEP` number of files in the rclone storage backend (local filesystem by default). The first file is `report` This provides a basic log of the last backup run. Subesquent files are timestamped dumps of the sqlite database. `FILES_TO_KEEP` of `1` will only save the report (for testing purposes), A `FILES_TO_KEEP` of `5` would save the report and 4 timestamped database dumps. A `FILES_TO_KEEP` of `0` retains all files uploaded to the storage backend.
+Retention is set by `FILES_TO_KEEP` (default `3`). This works very simply and retains `FILES_TO_KEEP` number of files in the rclone storage backend (local filesystem by default). The first file is `report` This provides a basic log of the last backup run. The second file is the `init` directory, where the setup files are stored. Subesquent files are timestamped dumps of the sqlite database. `FILES_TO_KEEP` of `2` will only save the report (for testing purposes), A `FILES_TO_KEEP` of `5` would save the report and 3 timestamped database dumps. A `FILES_TO_KEEP` of `0` retains all files uploaded to the storage backend.
 
 The periodicity of backups (set by `CRON`) in conjunction with the number of files retained will determine the period that backups will cover. Further archive or backups of these files (I use [Borgmatic](https://torsion.org/borgmatic/)) should be used to ensure the backup coverage that is required.
 
@@ -66,7 +68,7 @@ podman run -d --name lldap-backup \
 -v [host_lldap_database_directory]:/sqlitedata \
 -v [host_backup_directory]:/sqliteback \
 -e CRON="5 0 * * *" \
--e FILES_TO_KEEP="2" \
+-e FILES_TO_KEEP="3" \
 -e MAIL_SMTP_ENABLE="FALSE" \
 -e MAIL_SMTP_VARIABLES="" \
 -e MAIL_TO="" \
@@ -75,12 +77,12 @@ podman run -d --name lldap-backup \
 -e SENDXMPP_PASSWORD="" \
 -e SENDXMPP_RECIPIENT="" \
 -e TIMEZONE="UTC" \
-tetricky/sqlite-backup:latest
+tetricky/sqlite-backup:0.1.0-lldap
 ```
 
 ### LLDAP Note
 
-It should be noted that by default this backup script only dumps the sqlite3 database. To fully restore an lldap installation it may be necessary to also backup other files (`lldap_config.toml` `private_key`). This backup just addresses the database.
+It should be noted that by default this backup script dumps the sqlite3 database and a report in to the rclone remote storage backend, and an init directory to retain copies of the `lldap_config.toml` and `private_key`. To fully restore an lldap installation it will be necessary to copy these other files (`lldap_config.toml` `private_key`) into the new target data directory.
 
 #### storage backend
 
@@ -97,7 +99,7 @@ It is also possible to mount the
 run container using podman
   
 ```
-podman run -d --name lldap-backup -v [host sqlite database directory]:/sqlitebackup/data/ -v [host sqlite backup directory]:/sqliteback/ -v :/config/rclone/rclone.conf tetricky/sqlite-backup:latest
+podman run -d --name lldap-backup -v [host sqlite database directory]:/sqlitebackup/data/ -v [host sqlite backup directory]:/sqliteback/ -v :/config/rclone/rclone.conf tetricky/sqlite-backup:0.1.0--lldap
 ```
 
 ### Restore
@@ -147,9 +149,9 @@ Default: `5 0 * * *` (run the script at 5 minutes past midnight every day)
 
 #### FILES_TO_KEEP
 
-The number of files in the backup storage system to retain. A value of `1` will retain only the backup report, NOT any backups (for testing purposes). The minimum value to retain a backup is `2`. Set to `0` to keep all backup files.
+The number of files in the backup storage system to retain. A value of `1` will retain only the init directory, NOT any backups (for testing purposes set to '2' to also retain the report). The minimum value to retain a database backup is `3`. Set to `0` to keep all backup files.
 
-Default: `2`
+Default: `3`
 
 #### TIMEZONE
 
