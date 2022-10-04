@@ -26,6 +26,8 @@ RUN chmod +x /app/*.sh \
 ENV DATA_DIR="/sqlitedata"
 ENV BACKUP_DIR="/backup"
 ENV DB_NAME="users.db"
+ENV CONFIG_NAME="lldap_config.toml"
+ENV PKEY_NAME="private_key"
 ENV CRON="5 0 * * *"
 ENV RCLONE_REMOTE_NAME="sqlitebackup"
 ENV RCLONE_REMOTE_DIR="/sqliteback/"
