@@ -4,6 +4,8 @@
 
 A simple backup container to dump an sqlite database for nitnelave/lldap. By adjusting the environment variables this might also be backup container for any sqlite3 database
 
+This branch includes backup for the additional files alongside the sqlite backup
+
 Project homepage: https://github.com/tetricky/sqlite-backup
 On docker hub: https://hub.docker.com/r/tetricky/sqlite-backup
 
