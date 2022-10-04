@@ -129,6 +129,21 @@ The name of the sqlite database to be backed up.
 
 Default: `users.db`
 
+
+#### CONFIG_NAME
+
+The name of the configuration file to be backed up.
+
+Default: `lldap_config.toml`
+
+
+#### PKEY_NAME
+
+The name of the private key to be backed up.
+
+Default: `private_key`
+
+
 #### RCLONE_REMOTE_NAME
 
 Rclone remote name, to upload the database dumps to. Must match the rclone.conf settings.
