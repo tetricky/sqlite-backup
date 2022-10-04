@@ -29,6 +29,7 @@ function check_rclone_connection() {
     echo "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Initialising" >> ${BACKUP_DIR}/report
     # test rclone storage backend
     rclone mkdir ${RCLONE_REMOTE}
+    rclone mkdir ${RCLONE_REMOTE}/init
     if [[ $? != 0 ]]; then
         color red "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Storage system failure $(date +"%Y-%m-%d %H:%M:%S %Z")"
         echo "check_rclone_connection(): ${RCLONE_REMOTE_NAME} Storage system failure $(date +"%Y-%m-%d %H:%M:%S %Z")" >> ${BACKUP_DIR}/report
