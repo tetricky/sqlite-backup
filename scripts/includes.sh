@@ -98,6 +98,8 @@ function init_env() {
     color yellow "========================================"
     color yellow "DB_NAME: ${DB_NAME}"
     color yellow "DATA_DIR: ${DATA_DIR}"
+    color yellow "CONFIG_NAME: ${CONFIG_NAME}"
+    color yellow "PKEY_NAME: ${PKEY_NAME}"
     color yellow "DATA_DB: ${DATA_DB}"
     color yellow "BACKUP_DIR: ${BACKUP_DIR}"
     color yellow "CRON: ${CRON}"
